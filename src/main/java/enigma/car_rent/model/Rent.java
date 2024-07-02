@@ -1,8 +1,10 @@
 package enigma.car_rent.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -18,8 +20,10 @@ public class Rent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Boolean completed;
-    private Date started_at;
-    private Date ends_at;
+    @JsonFormat (pattern = "yyyy-MM-dd")
+    private LocalDateTime started_at;
+    @JsonFormat (pattern = "yyyy-MM-dd")
+    private LocalDateTime ends_at;
     private Integer price;
 
     @ManyToOne

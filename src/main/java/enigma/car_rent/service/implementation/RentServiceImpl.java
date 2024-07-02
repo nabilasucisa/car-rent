@@ -11,6 +11,7 @@ import enigma.car_rent.utils.DTO.RentDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 
@@ -31,20 +32,22 @@ public class RentServiceImpl implements RentService {
         newRent.setCompleted(false);
         newRent.setStarted_at(request.getStarted_at());
         newRent.setEnds_at(request.getEnds_at());
-        newRent.setPrice((int) (car.getPrice() * (request.getEnds_at().getTime() - request.getStarted_at().getTime())));
+        Duration duration = Duration.between(request.getStarted_at(),request.getEnds_at());
+        long days = duration.toDays();
+        newRent.setPrice((int) (days * car.getPrice()));
+        System.out.println(days);
         car.setAvailable(false);
-        Rent result = rentRepository.save(newRent);
-        return result;
+        return rentRepository.save(newRent);
     }
 
     @Override
     public List<Rent> getAll() {
-        return List.of();
+        return rentRepository.findAll();
     }
 
     @Override
     public Rent getOne(Integer id) {
-        return null;
+        return rentRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -54,6 +57,6 @@ public class RentServiceImpl implements RentService {
 
     @Override
     public void delete(Integer id) {
-
+        rentRepository.deleteById(id);
     }
 }
