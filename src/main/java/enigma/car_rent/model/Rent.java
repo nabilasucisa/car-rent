@@ -21,9 +21,9 @@ public class Rent {
     private Integer id;
     private Boolean completed;
     @JsonFormat (pattern = "yyyy-MM-dd")
-    private LocalDateTime started_at;
+    private Date started_at;
     @JsonFormat (pattern = "yyyy-MM-dd")
-    private LocalDateTime ends_at;
+    private Date ends_at;
     private Integer price;
 
     @ManyToOne
