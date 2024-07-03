@@ -1,10 +1,16 @@
 package enigma.car_rent.controller;
 
 import enigma.car_rent.model.Brand;
+import enigma.car_rent.model.User;
 import enigma.car_rent.service.BrandService;
+import enigma.car_rent.utils.PageResponseWrapper;
+import enigma.car_rent.utils.Res;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,8 +27,15 @@ public class BrandController {
     }
 
     @GetMapping
-    public Page<Brand> getAll(Pageable pageable, String name) {
-        return brandService.getAll(pageable, name);
+    public ResponseEntity<?> getAll(@PageableDefault(size=10) Pageable pageable,
+                                    @RequestParam(required = false) String name) {
+        Page<Brand> res = brandService.getAll(pageable, name);
+        PageResponseWrapper<Brand> result = new PageResponseWrapper<>(res);
+        return Res.renderJson(
+                result,
+                "FOUND",
+                HttpStatus.OK
+        );
     }
 
     @GetMapping("/{id}")
