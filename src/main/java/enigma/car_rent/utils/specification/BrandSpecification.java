@@ -19,6 +19,4 @@ public class BrandSpecification {
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
-
-
 }
