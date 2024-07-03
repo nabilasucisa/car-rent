@@ -1,10 +1,9 @@
 package enigma.car_rent.controller;
 
-import enigma.car_rent.model.Car;
 import enigma.car_rent.model.Rent;
 import enigma.car_rent.service.RentService;
-import enigma.car_rent.utils.DTO.CarDTO;
 import enigma.car_rent.utils.DTO.RentDTO;
+import enigma.car_rent.utils.DTO.RentReturnDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,10 +30,15 @@ public class RentController {
         return rentService.getOne(id);
     }
 
-//    @PutMapping("/update/{id}")
-//    public Rent update(@PathVariable Integer id, @RequestBody RentDTO request) {
-//        return rentService.update(id, request);
-//    }
+    @PutMapping("/update/{id}")
+    public Rent update(@PathVariable Integer id, @RequestBody RentDTO request) {
+        return rentService.update(id, request);
+    }
+
+    @PutMapping("/return/{id}")
+    public Rent returned(@PathVariable Integer id, @RequestBody RentReturnDTO completed) {
+        return rentService.returned(id, completed);
+    }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {

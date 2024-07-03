@@ -2,11 +2,17 @@ package enigma.car_rent.service.implementation;
 
 import enigma.car_rent.model.Brand;
 import enigma.car_rent.model.Car;
+import enigma.car_rent.model.User;
 import enigma.car_rent.repository.CarRepository;
 import enigma.car_rent.service.BrandService;
 import enigma.car_rent.service.CarService;
 import enigma.car_rent.utils.DTO.CarDTO;
+import enigma.car_rent.utils.specification.CarSpecification;
+import enigma.car_rent.utils.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,13 +36,15 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public List<Car> getAll() {
-        return carRepository.findAll();
+    public Page<Car> getAll(Pageable pageable, String name, Boolean available) {
+        Specification<Car> spec = CarSpecification.getSpecification(name, available);
+        return carRepository.findAll(spec, pageable);
     }
 
     @Override
     public Car getOne(Integer id) {
-        return carRepository.findById(id).orElse(null);
+        return carRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("car with id " + id + " not found"));
     }
 
     @Override

@@ -8,6 +8,7 @@ import enigma.car_rent.service.CarService;
 import enigma.car_rent.service.RentService;
 import enigma.car_rent.service.UserService;
 import enigma.car_rent.utils.DTO.RentDTO;
+import enigma.car_rent.utils.DTO.RentReturnDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +55,9 @@ public class RentServiceImpl implements RentService {
         Rent updateRent = this.getOne(id);
         Car car = carService.getOne(request.getCar_id());
         User user = userService.getOne(request.getUser_id());
+        updateRent.setCar(car);
+        updateRent.getCar().setAvailable(false);
+        updateRent.setUser(user);
         updateRent.setStarted_at(request.getStarted_at());
         updateRent.setEnds_at(request.getEnds_at());
         Integer diff = Math.toIntExact(request.getEnds_at().getTime() - request.getStarted_at().getTime());
@@ -63,14 +67,31 @@ public class RentServiceImpl implements RentService {
     }
 
     @Override
-    public Rent returned(Integer id, Rent completed) {
-        Rent rent = this.getOne(id);
-
-        if (completed.getEnds_at().getTime() > rent.getEnds_at().getTime())
-
-        return null;
+    public Rent returned(Integer id, RentReturnDTO completed) {
+        Rent returnRent = this.getOne(id);
+        User user = returnRent.getUser();
+        Integer diff = Math.toIntExact(completed.getReturn_at().getTime() - returnRent.getEnds_at().getTime());
+        diff = diff / 86400000;
+        if (diff > 0) {
+            System.out.println(user.getBalance());
+            Integer penalty = (int) ((returnRent.getCar().getPrice() * diff)
+                                + (0.1 * diff * returnRent.getPrice()));
+            Integer finalBalance = (int) (user.getBalance()
+                    - returnRent.getPrice()
+                    - penalty);
+            returnRent.getUser().setBalance(finalBalance);
+            System.out.println(user.getBalance());
+            System.out.println(returnRent.getPrice());
+            System.out.println(penalty);
+            System.out.println(diff);
+        } else if (diff <= 0){
+            Integer finalBalance = (int) (user.getBalance() - returnRent.getPrice());
+            returnRent.getUser().setBalance(finalBalance);
+        }
+        returnRent.setCompleted(true);
+        returnRent.getCar().setAvailable(true);
+        return rentRepository.save(returnRent);
     }
-
 
     @Override
     public void delete(Integer id) {
