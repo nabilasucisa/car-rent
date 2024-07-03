@@ -1,10 +1,18 @@
 package enigma.car_rent.controller;
 
+import enigma.car_rent.model.Brand;
 import enigma.car_rent.model.Rent;
 import enigma.car_rent.service.RentService;
 import enigma.car_rent.utils.DTO.RentDTO;
 import enigma.car_rent.utils.DTO.RentReturnDTO;
+import enigma.car_rent.utils.PageResponseWrapper;
+import enigma.car_rent.utils.Res;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,8 +29,14 @@ public class RentController {
     }
 
     @GetMapping
-    public List<Rent> getAll() {
-        return rentService.getAll();
+    public ResponseEntity<?> getAll(@PageableDefault(size=10) Pageable pageable) {
+        Page<Rent> res = rentService.getAll(pageable);
+        PageResponseWrapper<Rent> result = new PageResponseWrapper<>(res);
+        return Res.renderJson(
+                result,
+                "FOUND",
+                HttpStatus.OK
+        );
     }
 
     @GetMapping("/{id}")
@@ -35,9 +49,9 @@ public class RentController {
         return rentService.update(id, request);
     }
 
-    @PutMapping("/return/{id}")
-    public Rent returned(@PathVariable Integer id, @RequestBody RentReturnDTO completed) {
-        return rentService.returned(id, completed);
+    @PutMapping("/return")
+    public Rent returned(@RequestBody RentReturnDTO completed) {
+        return rentService.returned(completed);
     }
 
     @DeleteMapping("/{id}")

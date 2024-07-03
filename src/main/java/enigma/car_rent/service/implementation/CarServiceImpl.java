@@ -24,13 +24,13 @@ public class CarServiceImpl implements CarService {
     private final BrandService brandService;
 
     @Override
-    public Car create(CarDTO requset) {
-        Brand brand = brandService.getOne(requset.getBrand_id());
+    public Car create(CarDTO request) {
+        Brand brand = brandService.getOne(request.getBrand_id());
         Car newCar = new Car();
         newCar.setBrand(brand);
-        newCar.setName(requset.getName());
-        newCar.setAvailable(requset.getAvailable());
-        newCar.setPrice(requset.getPrice());
+        newCar.setName(request.getName());
+        newCar.setAvailable(request.getAvailable());
+        newCar.setPrice(request.getPrice());
         Car result = carRepository.save(newCar);
         return result;
     }

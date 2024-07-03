@@ -43,7 +43,7 @@ public class BrandController {
         return brandService.getOne(id);
     }
 
-    @PutMapping
+    @PutMapping("/update")
     public Brand update(@RequestBody Brand requset) {
         return brandService.update(requset);
     }

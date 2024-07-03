@@ -48,6 +48,8 @@ public class ErrorController {
             message = "Car not found";
         } else if (e.getMessage().contains("brand with id")) {
             message = "Brand not found";
+        } else if (e.getMessage().contains("rent with id")) {
+            message = "Rent not found";
         }
         return Res.renderJson(null, message, status);
     }

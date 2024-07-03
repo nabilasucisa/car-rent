@@ -13,6 +13,7 @@ import java.util.Date;
 @Builder
 
 public class RentReturnDTO {
+    private Integer id;
     @JsonFormat (pattern = "yyyy-MM-dd")
     private Date return_at;
 }

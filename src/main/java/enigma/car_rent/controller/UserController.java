@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAll(@PageableDefault(size=10) Pageable pageable,
+    public ResponseEntity<?> getAll(@PageableDefault(size = 10) Pageable pageable,
                                     @RequestParam(required = false) String name) {
         Page<User> res = userService.getAll(pageable, name);
         PageResponseWrapper<User> result = new PageResponseWrapper<>(res);
@@ -47,8 +47,8 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public User update(@RequestBody User requset) {
-        return userService.update(requset);
+    public User update(@RequestBody User request) {
+        return userService.update(request);
     }
 
     @PutMapping("/topup/{id}")

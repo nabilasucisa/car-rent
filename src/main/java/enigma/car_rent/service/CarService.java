@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface CarService {
-    Car create(CarDTO requset);
+    Car create(CarDTO request);
     Page<Car> getAll(Pageable pageable, String name, Boolean available);
     Car getOne(Integer id);
     Car update(Integer id, CarDTO request);

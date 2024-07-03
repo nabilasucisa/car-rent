@@ -1,5 +1,6 @@
 package enigma.car_rent.service.implementation;
 
+import enigma.car_rent.model.Brand;
 import enigma.car_rent.model.Car;
 import enigma.car_rent.model.Rent;
 import enigma.car_rent.model.User;
@@ -9,7 +10,11 @@ import enigma.car_rent.service.RentService;
 import enigma.car_rent.service.UserService;
 import enigma.car_rent.utils.DTO.RentDTO;
 import enigma.car_rent.utils.DTO.RentReturnDTO;
+import enigma.car_rent.utils.specification.BrandSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -41,13 +46,14 @@ public class RentServiceImpl implements RentService {
     }
 
     @Override
-    public List<Rent> getAll() {
-        return rentRepository.findAll();
+    public Page<Rent> getAll(Pageable pageable) {
+        return rentRepository.findAll(pageable);
     }
 
     @Override
     public Rent getOne(Integer id) {
-        return rentRepository.findById(id).orElse(null);
+        return rentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("rent with id " + id + " not found"));
     }
 
     @Override
@@ -67,8 +73,8 @@ public class RentServiceImpl implements RentService {
     }
 
     @Override
-    public Rent returned(Integer id, RentReturnDTO completed) {
-        Rent returnRent = this.getOne(id);
+    public Rent returned(RentReturnDTO completed) {
+        Rent returnRent = this.getOne(completed.getId());
         User user = returnRent.getUser();
         Integer diff = Math.toIntExact(completed.getReturn_at().getTime() - returnRent.getEnds_at().getTime());
         diff = diff / 86400000;
