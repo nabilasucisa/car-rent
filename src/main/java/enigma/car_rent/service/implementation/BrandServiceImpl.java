@@ -23,14 +23,15 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public Page<Brand> getAll(Pageable pageable, String brand) {
-        Specification<Brand> spec = BrandSpecification.getSpecification(brand);
+    public Page<Brand> getAll(Pageable pageable, String name) {
+        Specification<Brand> spec = BrandSpecification.getSpecification(name);
         return brandRepository.findAll(spec, pageable);
     }
 
     @Override
     public Brand getOne(Integer id) {
-        return brandRepository.findById(id).orElse(null);
+        return brandRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("brand with id " + id + " not found"));
     }
 
     @Override
