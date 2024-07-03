@@ -11,11 +11,12 @@ import lombok.*;
 @Builder
 
 public class CarDTO {
-    @NotBlank
+    @NotBlank(message = "Name must be filled!")
     private String name;
-    private Boolean available = true;
-    @NotNull
+    @NotNull(message = "Available cannot be null!")
+    private Boolean available;
+    @NotNull(message = "Price cannot be null!")
     private Integer price;
-    @NotNull
+    @NotNull(message = "Brand ID cannot be null!")
     private Integer brand_id;
 }

@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.UnexpectedTypeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -45,10 +46,23 @@ public class ErrorController {
             message = "User not found";
         } else if (e.getMessage().contains("car with id")) {
             message = "Car not found";
-            {
-            }
-            return Res.renderJson(null, message, status);
+        } else if (e.getMessage().contains("brand with id")) {
+            message = "Brand not found";
         }
         return Res.renderJson(null, message, status);
     }
+
+//    @ExceptionHandler(RuntimeException.class)
+//    public ResponseEntity<?> methodArgumentNotValidException(MethodArgumentNotValidException e) {
+//        String message = e.getMessage();
+//        HttpStatus status = HttpStatus.BAD_REQUEST;
+//
+//        if (e.getMessage().contains("name")) {
+//            message = "Name cannot be blank";
+//        }
+//            }
+//            return Res.renderJson(null, message, status);
+//        }
+//        return Res.renderJson(null, message, status);
+//    }
 }

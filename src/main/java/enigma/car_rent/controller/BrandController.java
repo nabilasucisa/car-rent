@@ -3,6 +3,8 @@ package enigma.car_rent.controller;
 import enigma.car_rent.model.Brand;
 import enigma.car_rent.service.BrandService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +21,8 @@ public class BrandController {
     }
 
     @GetMapping
-    public List<Brand> getAll() {
-        return brandService.getAll();
+    public Page<Brand> getAll(Pageable pageable, String name) {
+        return brandService.getAll(pageable, name);
     }
 
     @GetMapping("/{id}")
