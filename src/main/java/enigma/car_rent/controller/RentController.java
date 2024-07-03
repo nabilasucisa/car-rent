@@ -31,10 +31,15 @@ public class RentController {
         return rentService.getOne(id);
     }
 
-//    @PutMapping("/update/{id}")
-//    public Rent update(@PathVariable Integer id, @RequestBody RentDTO request) {
-//        return rentService.update(id, request);
-//    }
+    @PutMapping("/update/{id}")
+    public Rent update(@PathVariable Integer id, @RequestBody RentDTO request) {
+        return rentService.update(id, request);
+    }
+
+    @PutMapping("/returned/{id}")
+    public Rent returned(@PathVariable Integer id) {
+        return rentService.returned(id);
+    }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {

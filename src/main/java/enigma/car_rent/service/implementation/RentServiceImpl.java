@@ -27,16 +27,24 @@ public class RentServiceImpl implements RentService {
         Car car = carService.getOne(request.getCar_id());
         User user = userService.getOne(request.getUser_id());
         Rent newRent = new Rent();
-        newRent.setCar(car);
-        newRent.setUser(user);
-        newRent.setCompleted(false);
-        newRent.setStarted_at(request.getStarted_at());
-        newRent.setEnds_at(request.getEnds_at());
-        Integer diff = Math.toIntExact(request.getEnds_at().getTime() - request.getStarted_at().getTime());
-        diff = diff / 86400000;
-        newRent.setPrice(diff * car.getPrice());
-        car.setAvailable(false);
-        return rentRepository.save(newRent);
+
+        if (car.getAvailable()) {
+            newRent.setCar(car);
+            newRent.setUser(user);
+            newRent.setCompleted(false);
+            newRent.setStarted_at(request.getStarted_at());
+            newRent.setEnds_at(request.getEnds_at());
+            // Calculate the time difference in milliseconds
+            long diffInMillis = request.getEnds_at().getTime() - request.getStarted_at().getTime();
+            // Convert the difference to days
+            long diffInDays = diffInMillis / 86400000;
+            // Set the price based on the number of days
+            newRent.setPrice((int) (diffInDays * car.getPrice()));
+            car.setAvailable(false);
+            return rentRepository.save(newRent);
+        } else {
+            throw new RuntimeException("Car not Available");
+        }
     }
 
     @Override
@@ -53,24 +61,32 @@ public class RentServiceImpl implements RentService {
     public Rent update(Integer id, RentDTO request) {
         Rent updateRent = this.getOne(id);
         Car car = carService.getOne(request.getCar_id());
-        User user = userService.getOne(request.getUser_id());
         updateRent.setStarted_at(request.getStarted_at());
         updateRent.setEnds_at(request.getEnds_at());
-        Integer diff = Math.toIntExact(request.getEnds_at().getTime() - request.getStarted_at().getTime());
+        int diff = Math.toIntExact(request.getEnds_at().getTime() - request.getStarted_at().getTime());
         diff = diff / 86400000;
         updateRent.setPrice(diff * car.getPrice());
         return rentRepository.save(updateRent);
     }
 
     @Override
-    public Rent returned(Integer id, Rent completed) {
+    public Rent returned(Integer id) {
         Rent rent = this.getOne(id);
+        Date now = new Date();
+        long diffInMillis = now.getTime() - rent.getEnds_at().getTime();
+        int diffInDays = Math.toIntExact(diffInMillis / 86400000);
 
-        if (completed.getEnds_at().getTime() > rent.getEnds_at().getTime())
-
+        if (now.after(rent.getEnds_at())) {
+            Integer balanceNow = rent.getPrice();
+            Integer penalty = balanceNow * diffInDays * 10 / 100;
+            Integer balanceReturned = balanceNow + penalty;
+            rent.setPrice(balanceReturned);
+            rent.getCar().setAvailable(true);
+            rent.setCompleted(true);
+            return rentRepository.save(rent);
+        }
         return null;
     }
-
 
     @Override
     public void delete(Integer id) {

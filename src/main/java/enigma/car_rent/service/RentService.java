@@ -12,6 +12,6 @@ public interface RentService {
     List<Rent> getAll();
     Rent getOne(Integer id);
     Rent update(Integer id, RentDTO request);
-    Rent returned(Integer id, Rent completed);
+    Rent returned(Integer id);
     void delete(Integer id);
 }

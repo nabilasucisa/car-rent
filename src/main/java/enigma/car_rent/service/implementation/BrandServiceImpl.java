@@ -3,7 +3,11 @@ package enigma.car_rent.service.implementation;
 import enigma.car_rent.model.Brand;
 import enigma.car_rent.repository.BrandRepository;
 import enigma.car_rent.service.BrandService;
+import enigma.car_rent.utils.specification.BrandSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,13 +18,14 @@ public class BrandServiceImpl implements BrandService {
     private final BrandRepository brandRepository;
 
     @Override
-    public Brand create(Brand requset) {
-        return brandRepository.save(requset);
+    public Brand create(Brand request) {
+        return brandRepository.save(request);
     }
 
     @Override
-    public List<Brand> getAll() {
-        return brandRepository.findAll();
+    public Page<Brand> getAll(Pageable pageable, String brand) {
+        Specification<Brand> spec = BrandSpecification.getSpecification(brand);
+        return brandRepository.findAll(spec, pageable);
     }
 
     @Override
