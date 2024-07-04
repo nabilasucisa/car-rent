@@ -1,18 +1,25 @@
 package enigma.car_rent.controller;
 
 import enigma.car_rent.model.Brand;
+import enigma.car_rent.model.Car;
 import enigma.car_rent.model.Rent;
 import enigma.car_rent.service.RentService;
+import enigma.car_rent.utils.DTO.CarDTO;
 import enigma.car_rent.utils.DTO.RentDTO;
 import enigma.car_rent.utils.DTO.RentReturnDTO;
+import enigma.car_rent.utils.ErrorResponse;
 import enigma.car_rent.utils.PageResponseWrapper;
 import enigma.car_rent.utils.Res;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +31,19 @@ import java.util.List;
 public class RentController {
     private final RentService rentService;
     @PostMapping
-    public Rent create(@RequestBody RentDTO request) {
-        return rentService.create(request);
+    @Validated
+    public ResponseEntity<?> create(@Valid @RequestBody RentDTO request, Errors errors) {
+        if (errors.hasErrors()) {
+            ErrorResponse<Car> responseData = new ErrorResponse<>();
+            for (ObjectError error : errors.getAllErrors()) {
+                responseData.getMessage().add(error.getDefaultMessage());
+            }
+            responseData.setStatus(HttpStatus.BAD_REQUEST);
+
+            return ResponseEntity.status(responseData.getStatus()).body(responseData);
+        }
+
+        return ResponseEntity.ok(rentService.create(request));
     }
 
     @GetMapping
