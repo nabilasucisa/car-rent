@@ -7,7 +7,7 @@ import enigma.car_rent.utils.DTO.CarDTO;
 import java.util.List;
 
 public interface CarService {
-    Car create(CarDTO requset);
+    Car create(CarDTO request);
     List<Car> getAll();
     Car getOne(Integer id);
     Car update(Integer id, CarDTO request);
