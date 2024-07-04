@@ -22,6 +22,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -47,8 +48,9 @@ public class RentController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAll(@PageableDefault(size=10) Pageable pageable) {
-        Page<Rent> res = rentService.getAll(pageable);
+    public ResponseEntity<?> getAll(@PageableDefault(size=10) Pageable pageable,
+                                    @RequestParam(required = false) Boolean completed) {
+        Page<Rent> res = rentService.getAll(pageable, completed);
         PageResponseWrapper<Rent> result = new PageResponseWrapper<>(res);
         return Res.renderJson(
                 result,
